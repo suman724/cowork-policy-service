@@ -1,0 +1,82 @@
+tenant_id: default
+
+capabilities:
+  - name: File.Read
+    allowed_paths:
+      - "."
+    blocked_paths:
+      - ".env"
+      - ".git/config"
+    max_file_size_bytes: 10485760  # 10 MB
+
+  - name: File.Write
+    allowed_paths:
+      - "."
+    blocked_paths:
+      - ".env"
+      - ".git/"
+    max_file_size_bytes: 10485760  # 10 MB
+    requires_approval: true
+    approval_rule_id: file-write-approval
+
+  - name: File.Delete
+    allowed_paths:
+      - "."
+    blocked_paths:
+      - ".git/"
+    requires_approval: true
+    approval_rule_id: file-delete-approval
+
+  - name: Shell.Exec
+    allowed_commands:
+      - git
+      - python
+      - pip
+      - npm
+      - node
+      - make
+      - ls
+      - cat
+      - grep
+      - find
+    blocked_commands:
+      - rm -rf /
+      - sudo
+    max_output_bytes: 1048576  # 1 MB
+    requires_approval: true
+    approval_rule_id: shell-exec-approval
+
+  - name: Network.Http
+    allowed_domains:
+      - "*.github.com"
+      - "*.githubusercontent.com"
+      - "pypi.org"
+      - "registry.npmjs.org"
+
+  - name: Workspace.Upload
+    max_file_size_bytes: 52428800  # 50 MB
+
+  - name: BackendTool.Invoke
+
+  - name: LLM.Call
+
+llm_policy:
+  allowed_models:
+    - claude-sonnet-4-20250514
+    - claude-haiku-4-20250414
+  max_input_tokens: 200000
+  max_output_tokens: 16384
+  max_session_tokens: 1000000
+
+approval_rules:
+  - approval_rule_id: file-write-approval
+    title: File Write
+    description: The agent wants to write or modify a file. Review the changes before approving.
+
+  - approval_rule_id: file-delete-approval
+    title: File Delete
+    description: The agent wants to delete a file. Confirm this is intended.
+
+  - approval_rule_id: shell-exec-approval
+    title: Shell Command
+    description: The agent wants to execute a shell command. Review the command before approving.
