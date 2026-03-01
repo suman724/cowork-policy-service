@@ -7,7 +7,7 @@ install: ## Install all dependencies
 	pip install -e ".[dev]" -e "../cowork-platform[sdk]"
 
 run: ## Run the service locally with auto-reload
-	uvicorn policy_service.main:app --reload --port 8001
+	set -a && [ -f .env ] && . .env; set +a && uvicorn policy_service.main:app --reload --port 8001
 
 lint: ## Run linter
 	ruff check src/ tests/
