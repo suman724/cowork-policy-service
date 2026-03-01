@@ -2,13 +2,26 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
+
+CapabilityName = Literal[
+    "File.Read",
+    "File.Write",
+    "File.Delete",
+    "Shell.Exec",
+    "Network.Http",
+    "Workspace.Upload",
+    "BackendTool.Invoke",
+    "LLM.Call",
+]
 
 
 class CapabilityConfig(BaseModel):
     """Single capability definition in tenant YAML config."""
 
-    name: str
+    name: CapabilityName
     allowed_paths: list[str] | None = None
     blocked_paths: list[str] | None = None
     allowed_commands: list[str] | None = None

@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterator
+from typing import Any
 
 import pytest
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from httpx import ASGITransport, AsyncClient
 
 from policy_service.config import Settings
 from policy_service.dependencies import get_policy_service
+from policy_service.exceptions import ServiceError
 from policy_service.models.domain import (
     ApprovalRuleConfig,
     CapabilityConfig,
@@ -103,9 +106,27 @@ def policy_service(repo: InMemoryPolicyRepository, settings: Settings) -> Policy
 
 @pytest.fixture
 async def client(policy_service: PolicyService) -> AsyncIterator[AsyncClient]:
+    async def _service_error_handler(request: Request, exc: Exception) -> JSONResponse:
+        se = (
+            exc
+            if isinstance(exc, ServiceError)
+            else ServiceError(
+                "Unknown",
+                code="INTERNAL_ERROR",
+                status_code=500,
+            )
+        )
+        body: dict[str, Any] = {
+            "code": se.code,
+            "message": se.message,
+            "retryable": se.status_code >= 500,
+        }
+        return JSONResponse(status_code=se.status_code, content=body)
+
     app = FastAPI()
     app.include_router(health.router)
     app.include_router(policy_bundles.router)
+    app.add_exception_handler(ServiceError, _service_error_handler)
 
     app.dependency_overrides[get_policy_service] = lambda: policy_service
 

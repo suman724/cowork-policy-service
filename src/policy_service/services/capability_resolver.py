@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import structlog
 from cowork_platform.policy_bundle import Capability
 
 from policy_service.models.domain import CapabilityConfig
+
+logger = structlog.get_logger()
 
 
 def resolve_capabilities(
@@ -16,14 +19,17 @@ def resolve_capabilities(
     Returns only capabilities whose name appears in `requested`.
     If `requested` is empty, returns all tenant capabilities.
     """
-    available = {cap.name: cap for cap in tenant_capabilities}
+    available: dict[str, CapabilityConfig] = {cap.name: cap for cap in tenant_capabilities}
 
     if not requested:
-        names = list(available.keys())
+        resolved = list(available.values())
     else:
-        names = [name for name in requested if name in available]
+        resolved = [available[name] for name in requested if name in available]
+        unknown = [name for name in requested if name not in available]
+        if unknown:
+            logger.warning("unknown_capabilities_requested", unknown=unknown)
 
-    return [_to_capability(available[name]) for name in names]
+    return [_to_capability(config) for config in resolved]
 
 
 def _to_capability(config: CapabilityConfig) -> Capability:

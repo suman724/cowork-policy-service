@@ -61,5 +61,6 @@ class ConfigFilePolicyRepository:
         return self._configs.get(tenant_id)
 
     def get_default_config(self) -> TenantPolicyConfig:
-        assert self._default is not None  # noqa: S101
+        if self._default is None:
+            raise PolicyConfigError("Default policy config was not loaded")
         return self._default
