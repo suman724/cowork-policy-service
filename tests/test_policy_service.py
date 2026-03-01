@@ -49,7 +49,11 @@ class TestBundleGeneration:
             capabilities=[],
         )
         today = datetime.now(UTC).strftime("%Y-%m-%d")
-        assert bundle.policyBundleVersion == f"{today}.1"
+        assert bundle.policyBundleVersion.startswith(f"{today}.")
+        # Suffix should be an 8-char hex string (UUID-based)
+        suffix = bundle.policyBundleVersion.split(".", maxsplit=3)[-1]
+        assert len(suffix) == 8
+        int(suffix, 16)  # validates it's a hex string
 
     def test_falls_back_to_default_config(self, policy_service: PolicyService) -> None:
         bundle = policy_service.generate_bundle(

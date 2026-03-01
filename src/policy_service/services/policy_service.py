@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import uuid
 from datetime import UTC, datetime, timedelta
 
 from cowork_platform.policy_bundle import ApprovalRule, LlmPolicy, PolicyBundle
@@ -26,7 +27,7 @@ class PolicyService:
         session_id: str,
         capabilities: list[str],
     ) -> PolicyBundle:
-        if not tenant_id or not user_id or not session_id:
+        if not tenant_id.strip() or not user_id.strip() or not session_id.strip():
             raise ValidationError("tenantId, userId, and sessionId are required")
 
         config = self._repo.get_tenant_config(tenant_id)
@@ -35,9 +36,15 @@ class PolicyService:
 
         resolved = resolve_capabilities(config.capabilities, capabilities)
 
+        # Filter approval rules to only those referenced by resolved capabilities
+        referenced_rule_ids = {cap.approvalRuleId for cap in resolved if cap.approvalRuleId}
+        relevant_rules = [
+            r for r in config.approval_rules if r.approval_rule_id in referenced_rule_ids
+        ]
+
         now = datetime.now(UTC)
         expires_at = now + timedelta(hours=self._settings.policy_expiry_hours)
-        version = now.strftime("%Y-%m-%d") + ".1"
+        version = now.strftime("%Y-%m-%d") + "." + uuid.uuid4().hex[:8]
 
         return PolicyBundle(
             policyBundleVersion=version,
@@ -48,7 +55,7 @@ class PolicyService:
             expiresAt=expires_at,
             capabilities=resolved,
             llmPolicy=_to_llm_policy(config),
-            approvalRules=_to_approval_rules(config.approval_rules),
+            approvalRules=_to_approval_rules(relevant_rules),
         )
 
 

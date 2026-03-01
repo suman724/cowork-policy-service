@@ -30,7 +30,7 @@ class ConfigFilePolicyRepository:
         self._load(config_dir)
 
     def _load(self, config_dir: str) -> None:
-        config_path = Path(config_dir)
+        config_path = Path(config_dir).resolve()
         if not config_path.is_dir():
             raise PolicyConfigError(f"Config directory not found: {config_dir}")
 
