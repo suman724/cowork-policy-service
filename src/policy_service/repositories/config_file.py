@@ -30,7 +30,7 @@ class ConfigFilePolicyRepository:
         self._load(config_dir)
 
     def _load(self, config_dir: str) -> None:
-        config_path = Path(config_dir)
+        config_path = Path(config_dir).resolve()
         if not config_path.is_dir():
             raise PolicyConfigError(f"Config directory not found: {config_dir}")
 
@@ -61,5 +61,6 @@ class ConfigFilePolicyRepository:
         return self._configs.get(tenant_id)
 
     def get_default_config(self) -> TenantPolicyConfig:
-        assert self._default is not None  # noqa: S101
+        if self._default is None:
+            raise PolicyConfigError("Default policy config was not loaded")
         return self._default
