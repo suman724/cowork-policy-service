@@ -15,6 +15,7 @@ CapabilityName = Literal[
     "Workspace.Upload",
     "BackendTool.Invoke",
     "LLM.Call",
+    "Search.Web",
 ]
 
 

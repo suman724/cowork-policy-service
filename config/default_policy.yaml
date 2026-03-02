@@ -60,6 +60,8 @@ capabilities:
 
   - name: LLM.Call
 
+  - name: Search.Web
+
 llm_policy:
   allowed_models:
     - claude-sonnet-4-20250514

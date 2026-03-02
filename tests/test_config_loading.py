@@ -14,7 +14,7 @@ class TestConfigLoading:
         repo = ConfigFilePolicyRepository("config")
         config = repo.get_default_config()
         assert config.tenant_id == "default"
-        assert len(config.capabilities) == 8
+        assert len(config.capabilities) == 9
 
     def test_raises_on_missing_directory(self) -> None:
         with pytest.raises(PolicyConfigError, match="not found"):
