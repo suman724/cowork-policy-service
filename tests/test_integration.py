@@ -85,8 +85,8 @@ class TestPolicyIntegration:
         )
         assert resp.status_code == 200
         body = resp.json()
-        # Default config has 8 capabilities
-        assert len(body["capabilities"]) == 8
+        # Default config has 9 capabilities
+        assert len(body["capabilities"]) == 9
 
     async def test_bundle_has_required_fields(self, integration_client: AsyncClient) -> None:
         resp = await integration_client.get(
