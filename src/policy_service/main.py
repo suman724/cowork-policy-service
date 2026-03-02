@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 
 from policy_service.config import Settings
 from policy_service.exceptions import ServiceError
+from policy_service.middleware import RequestIdMiddleware
 from policy_service.repositories.config_file import ConfigFilePolicyRepository
 from policy_service.routes import health, policy_bundles
 from policy_service.services.policy_service import PolicyService
@@ -26,6 +27,15 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     log_level = logging.getLevelNamesMapping().get(settings.log_level.upper(), logging.INFO)
     structlog.configure(
+        processors=[
+            structlog.contextvars.merge_contextvars,
+            structlog.stdlib.add_log_level,
+            structlog.stdlib.PositionalArgumentsFormatter(),
+            structlog.processors.TimeStamper(fmt="iso"),
+            structlog.processors.StackInfoRenderer(),
+            structlog.processors.format_exc_info,
+            structlog.processors.JSONRenderer(),
+        ],
         wrapper_class=structlog.make_filtering_bound_logger(log_level),
     )
 
@@ -43,6 +53,8 @@ def create_app() -> FastAPI:
         version="0.1.0",
         lifespan=lifespan,
     )
+
+    app.add_middleware(RequestIdMiddleware)
 
     app.include_router(health.router)
     app.include_router(policy_bundles.router)
