@@ -45,4 +45,7 @@ def _to_capability(config: CapabilityConfig) -> Capability:
         maxOutputBytes=config.max_output_bytes,
         requiresApproval=config.requires_approval,
         approvalRuleId=config.approval_rule_id,
+        allowedLanguages=config.allowed_languages,
+        maxExecutionTimeSeconds=config.max_execution_time_seconds,
+        allowCodeNetwork=config.allow_code_network,
     )

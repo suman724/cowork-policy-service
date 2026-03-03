@@ -16,6 +16,7 @@ CapabilityName = Literal[
     "BackendTool.Invoke",
     "LLM.Call",
     "Search.Web",
+    "Code.Execute",
 ]
 
 
@@ -32,6 +33,9 @@ class CapabilityConfig(BaseModel):
     max_output_bytes: int | None = None
     requires_approval: bool | None = None
     approval_rule_id: str | None = None
+    allowed_languages: list[str] | None = None
+    max_execution_time_seconds: int | None = None
+    allow_code_network: bool | None = None
 
 
 class ApprovalRuleConfig(BaseModel):
