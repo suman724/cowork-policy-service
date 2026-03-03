@@ -39,6 +39,17 @@ capabilities:
       - cat
       - grep
       - find
+      - pwd
+      - head
+      - tail
+      - wc
+      - echo
+      - which
+      - env
+      - whoami
+      - dirname
+      - basename
+      - realpath
     blocked_commands:
       - rm -rf /
       - sudo
