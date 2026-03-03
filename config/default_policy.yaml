@@ -73,6 +73,20 @@ capabilities:
 
   - name: Search.Web
 
+  - name: Code.Execute
+    allowed_languages:
+      - python
+    allowed_paths:
+      - "."
+    blocked_paths:
+      - ".env"
+      - ".git/"
+    max_execution_time_seconds: 120
+    max_output_bytes: 102400  # 100 KB
+    allow_code_network: false
+    requires_approval: true
+    approval_rule_id: code-execute-approval
+
 llm_policy:
   allowed_models:
     - claude-sonnet-4-20250514
@@ -93,3 +107,7 @@ approval_rules:
   - approval_rule_id: shell-exec-approval
     title: Shell Command
     description: The agent wants to execute a shell command. Review the command before approving.
+
+  - approval_rule_id: code-execute-approval
+    title: Code Execution
+    description: The agent wants to execute Python code. Review the code before approving.
