@@ -47,7 +47,7 @@ def default_config() -> TenantPolicyConfig:
             ),
             CapabilityConfig(
                 name="Network.Http",
-                allowed_domains=["*.github.com"],
+                blocked_domains=["169.254.169.254", "localhost", "127.0.0.1"],
             ),
         ],
         llm_policy=LlmPolicyConfig(
