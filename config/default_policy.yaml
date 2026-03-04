@@ -58,11 +58,15 @@ capabilities:
     approval_rule_id: shell-exec-approval
 
   - name: Network.Http
-    allowed_domains:
-      - "*.github.com"
-      - "*.githubusercontent.com"
-      - "pypi.org"
-      - "registry.npmjs.org"
+    blocked_domains:
+      - "169.254.169.254"
+      - "metadata.google.internal"
+      - "localhost"
+      - "127.0.0.1"
+      - "0.0.0.0"
+      - "10.*"
+      - "172.16.*"
+      - "192.168.*"
 
   - name: Workspace.Upload
     max_file_size_bytes: 52428800  # 50 MB

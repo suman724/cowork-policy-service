@@ -29,6 +29,7 @@ class CapabilityConfig(BaseModel):
     allowed_commands: list[str] | None = None
     blocked_commands: list[str] | None = None
     allowed_domains: list[str] | None = None
+    blocked_domains: list[str] | None = None
     max_file_size_bytes: int | None = None
     max_output_bytes: int | None = None
     requires_approval: bool | None = None

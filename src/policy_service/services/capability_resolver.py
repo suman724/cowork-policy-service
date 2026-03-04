@@ -41,6 +41,7 @@ def _to_capability(config: CapabilityConfig) -> Capability:
         allowedCommands=config.allowed_commands,
         blockedCommands=config.blocked_commands,
         allowedDomains=config.allowed_domains,
+        blockedDomains=config.blocked_domains,
         maxFileSizeBytes=config.max_file_size_bytes,
         maxOutputBytes=config.max_output_bytes,
         requiresApproval=config.requires_approval,
