@@ -95,6 +95,7 @@ llm_policy:
   allowed_models:
     - claude-sonnet-4-20250514
     - claude-haiku-4-20250414
+    - claude-haiku-4-5-20251001
   max_input_tokens: 200000
   max_output_tokens: 16384
   max_session_tokens: 1000000
