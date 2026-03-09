@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime, timedelta
 
-from cowork_platform.policy_bundle import ApprovalRule, LlmPolicy, PolicyBundle
+from cowork_platform.policy_bundle import ApprovalRule, LlmPolicy, PolicyBundle, TeamPolicy
 
 from policy_service.config import Settings
 from policy_service.exceptions import ValidationError
@@ -56,6 +56,7 @@ class PolicyService:
             capabilities=resolved,
             llmPolicy=_to_llm_policy(config),
             approvalRules=_to_approval_rules(relevant_rules),
+            teamPolicy=_to_team_policy(config),
         )
 
 
@@ -77,3 +78,14 @@ def _to_approval_rules(rules: list[ApprovalRuleConfig]) -> list[ApprovalRule]:
         )
         for r in rules
     ]
+
+
+def _to_team_policy(config: TenantPolicyConfig) -> TeamPolicy | None:
+    if config.team_policy is None:
+        return None
+    tp = config.team_policy
+    return TeamPolicy(
+        maxTeammates=tp.max_teammates,
+        teammateBudget=tp.teammate_budget,
+        allowedRoles=tp.allowed_roles or [],
+    )

@@ -56,6 +56,14 @@ class LlmPolicyConfig(BaseModel):
     max_session_tokens: int = 1000000
 
 
+class TeamPolicyConfig(BaseModel):
+    """Team policy constraints in tenant YAML config."""
+
+    max_teammates: int = 5
+    teammate_budget: int = 100_000
+    allowed_roles: list[str] = []
+
+
 class TenantPolicyConfig(BaseModel):
     """Root shape of a tenant's YAML policy config file."""
 
@@ -63,3 +71,4 @@ class TenantPolicyConfig(BaseModel):
     capabilities: list[CapabilityConfig]
     llm_policy: LlmPolicyConfig
     approval_rules: list[ApprovalRuleConfig] = []
+    team_policy: TeamPolicyConfig | None = None

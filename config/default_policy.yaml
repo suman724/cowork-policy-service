@@ -100,6 +100,11 @@ llm_policy:
   max_output_tokens: 16384
   max_session_tokens: 1000000
 
+team_policy:
+  max_teammates: 5
+  teammate_budget: 100000
+  allowed_roles: []
+
 approval_rules:
   - approval_rule_id: file-write-approval
     title: File Write

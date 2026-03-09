@@ -23,3 +23,10 @@ class TestConfigLoading:
     def test_raises_on_missing_default_file(self, tmp_path: object) -> None:
         with pytest.raises(PolicyConfigError, match="Default policy file not found"):
             ConfigFilePolicyRepository(str(tmp_path))
+
+    def test_loads_team_policy_from_yaml(self) -> None:
+        repo = ConfigFilePolicyRepository("config")
+        config = repo.get_default_config()
+        assert config.team_policy is not None
+        assert config.team_policy.max_teammates == 5
+        assert config.team_policy.teammate_budget == 100000

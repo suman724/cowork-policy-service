@@ -31,9 +31,22 @@ Returns a policy bundle JSON document.
     { "name": "Shell.Exec", "allowedCommands": [...], "requiresApproval": true, "approvalRuleId": "..." }
   ],
   "llmPolicy": { "allowedModels": [...], "maxInputTokens": 64000, "maxOutputTokens": 4000, "maxSessionTokens": 250000 },
-  "approvalRules": [{ "approvalRuleId": "...", "title": "...", "description": "..." }]
+  "approvalRules": [{ "approvalRuleId": "...", "title": "...", "description": "..." }],
+  "teamPolicy": { "maxTeammates": 5, "teammateBudget": 100000, "allowedRoles": [] }
 }
 ```
+
+### Team Policy
+
+The optional `teamPolicy` section controls agent team behavior:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `maxTeammates` | int (1–20) | Maximum concurrent teammates the lead can spawn |
+| `teammateBudget` | int (≥1) | Default token budget allocated to each teammate |
+| `allowedRoles` | string[] | Optional allowlist of teammate roles. Empty = all roles permitted |
+
+When `teamPolicy` is absent (null), team creation is disabled for the session. The `team_policy` section in YAML config maps to `teamPolicy` in the bundle JSON.
 
 ## Data Store
 
