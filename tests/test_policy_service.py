@@ -83,3 +83,52 @@ class TestBundleGeneration:
                 session_id="sess-1",
                 capabilities=[],
             )
+
+
+@pytest.mark.unit
+class TestTeamPolicy:
+    def test_bundle_without_team_policy(self, policy_service: PolicyService) -> None:
+        """Default config has no team_policy → teamPolicy is None in bundle."""
+        bundle = policy_service.generate_bundle(
+            tenant_id="default",
+            user_id="user-1",
+            session_id="sess-1",
+            capabilities=[],
+        )
+        assert bundle.teamPolicy is None
+
+    def test_bundle_with_team_policy(self, policy_service: PolicyService) -> None:
+        """Acme config has team_policy → teamPolicy is populated in bundle."""
+        bundle = policy_service.generate_bundle(
+            tenant_id="acme",
+            user_id="user-1",
+            session_id="sess-1",
+            capabilities=[],
+        )
+        assert bundle.teamPolicy is not None
+        assert bundle.teamPolicy.maxTeammates == 3
+        assert bundle.teamPolicy.teammateBudget == 50000
+        assert bundle.teamPolicy.allowedRoles == ["researcher", "coder"]
+
+    def test_team_policy_serialization(self, policy_service: PolicyService) -> None:
+        """teamPolicy round-trips through JSON serialization."""
+        bundle = policy_service.generate_bundle(
+            tenant_id="acme",
+            user_id="user-1",
+            session_id="sess-1",
+            capabilities=[],
+        )
+        data = bundle.model_dump(mode="json")
+        assert data["teamPolicy"]["maxTeammates"] == 3
+        assert data["teamPolicy"]["teammateBudget"] == 50000
+
+    def test_no_team_policy_omitted_in_json(self, policy_service: PolicyService) -> None:
+        """When teamPolicy is None, it should serialize as null."""
+        bundle = policy_service.generate_bundle(
+            tenant_id="default",
+            user_id="user-1",
+            session_id="sess-1",
+            capabilities=[],
+        )
+        data = bundle.model_dump(mode="json")
+        assert data["teamPolicy"] is None

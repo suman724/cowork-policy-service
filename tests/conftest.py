@@ -17,6 +17,7 @@ from policy_service.models.domain import (
     ApprovalRuleConfig,
     CapabilityConfig,
     LlmPolicyConfig,
+    TeamPolicyConfig,
     TenantPolicyConfig,
 )
 from policy_service.repositories.memory import InMemoryPolicyRepository
@@ -79,6 +80,11 @@ def tenant_acme_config() -> TenantPolicyConfig:
             max_input_tokens=100000,
             max_output_tokens=8192,
             max_session_tokens=500000,
+        ),
+        team_policy=TeamPolicyConfig(
+            max_teammates=3,
+            teammate_budget=50000,
+            allowed_roles=["researcher", "coder"],
         ),
     )
 
