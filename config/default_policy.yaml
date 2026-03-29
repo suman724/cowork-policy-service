@@ -91,6 +91,31 @@ capabilities:
     requires_approval: true
     approval_rule_id: code-execute-approval
 
+# Browser capabilities — disabled by default.
+# To enable for a tenant, add these to the tenant's policy config:
+#
+#  - name: Browser.Navigate
+#    allowed_domains:
+#      - "*.atlassian.net"
+#      - "github.com"
+#      - "*.google.com"
+#    blocked_domains:
+#      - "*.gambling.com"
+#
+#  - name: Browser.Interact
+#    requires_approval: false
+#
+#  - name: Browser.Extract
+#
+#  - name: Browser.Submit
+#    requires_approval: true
+#    approval_rule_id: browser-submit-approval
+#
+#  - name: Browser.Download
+#    max_file_size_bytes: 524288000  # 500 MB
+#    requires_approval: true
+#    approval_rule_id: browser-download-approval
+
 llm_policy:
   allowed_models:
     - claude-sonnet-4-20250514
