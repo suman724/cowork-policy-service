@@ -39,9 +39,7 @@ class PolicyService:
 
         # Browser capabilities are desktop-only. Remove for sandbox sessions.
         if execution_environment == "sandbox":
-            resolved = [
-                cap for cap in resolved if not cap.name.startswith("Browser.")
-            ]
+            resolved = [cap for cap in resolved if not cap.name.startswith("Browser.")]
 
         # Filter approval rules to only those referenced by resolved capabilities
         referenced_rule_ids = {cap.approvalRuleId for cap in resolved if cap.approvalRuleId}

@@ -89,9 +89,7 @@ class TestBundleGeneration:
 class TestBrowserPolicyGeneration:
     """Tests for browser capability inclusion/exclusion based on tenant config and environment."""
 
-    def test_browser_capabilities_included_for_desktop(
-        self, policy_service: PolicyService
-    ) -> None:
+    def test_browser_capabilities_included_for_desktop(self, policy_service: PolicyService) -> None:
         """Desktop session with browser-enabled tenant gets Browser.* capabilities."""
         bundle = policy_service.generate_bundle(
             tenant_id="browser-corp",
@@ -107,9 +105,7 @@ class TestBrowserPolicyGeneration:
         assert "Browser.Submit" in cap_names
         assert "Browser.Download" in cap_names
 
-    def test_browser_capabilities_excluded_for_sandbox(
-        self, policy_service: PolicyService
-    ) -> None:
+    def test_browser_capabilities_excluded_for_sandbox(self, policy_service: PolicyService) -> None:
         """Sandbox session never gets Browser.* capabilities."""
         bundle = policy_service.generate_bundle(
             tenant_id="browser-corp",
@@ -140,9 +136,7 @@ class TestBrowserPolicyGeneration:
         cap_names = {cap.name for cap in bundle.capabilities}
         assert not any(name.startswith("Browser.") for name in cap_names)
 
-    def test_browser_domain_scopes_in_bundle(
-        self, policy_service: PolicyService
-    ) -> None:
+    def test_browser_domain_scopes_in_bundle(self, policy_service: PolicyService) -> None:
         """Browser.Navigate includes allowedDomains and blockedDomains."""
         bundle = policy_service.generate_bundle(
             tenant_id="browser-corp",
@@ -155,9 +149,7 @@ class TestBrowserPolicyGeneration:
         assert nav_cap.allowedDomains == ["*.atlassian.net", "github.com"]
         assert nav_cap.blockedDomains == ["*.gambling.com"]
 
-    def test_browser_approval_rules_included(
-        self, policy_service: PolicyService
-    ) -> None:
+    def test_browser_approval_rules_included(self, policy_service: PolicyService) -> None:
         """Browser approval rules included when browser capabilities are resolved."""
         bundle = policy_service.generate_bundle(
             tenant_id="browser-corp",
@@ -170,9 +162,7 @@ class TestBrowserPolicyGeneration:
         assert "browser-submit-approval" in rule_ids
         assert "browser-download-approval" in rule_ids
 
-    def test_default_execution_environment_is_desktop(
-        self, policy_service: PolicyService
-    ) -> None:
+    def test_default_execution_environment_is_desktop(self, policy_service: PolicyService) -> None:
         """Default execution_environment is desktop — browser caps included if configured."""
         bundle = policy_service.generate_bundle(
             tenant_id="browser-corp",
