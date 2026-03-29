@@ -84,6 +84,54 @@ def tenant_acme_config() -> TenantPolicyConfig:
 
 
 @pytest.fixture
+def tenant_browser_config() -> TenantPolicyConfig:
+    """Tenant with browser capabilities enabled."""
+    return TenantPolicyConfig(
+        tenant_id="browser-corp",
+        capabilities=[
+            CapabilityConfig(name="File.Read", allowed_paths=["."]),
+            CapabilityConfig(name="Shell.Exec", allowed_commands=["git"]),
+            CapabilityConfig(
+                name="Browser.Navigate",
+                allowed_domains=["*.atlassian.net", "github.com"],
+                blocked_domains=["*.gambling.com"],
+            ),
+            CapabilityConfig(name="Browser.Interact"),
+            CapabilityConfig(name="Browser.Extract"),
+            CapabilityConfig(
+                name="Browser.Submit",
+                requires_approval=True,
+                approval_rule_id="browser-submit-approval",
+            ),
+            CapabilityConfig(
+                name="Browser.Download",
+                max_file_size_bytes=524288000,
+                requires_approval=True,
+                approval_rule_id="browser-download-approval",
+            ),
+        ],
+        llm_policy=LlmPolicyConfig(
+            allowed_models=["claude-sonnet-4-20250514"],
+            max_input_tokens=200000,
+            max_output_tokens=16384,
+            max_session_tokens=1000000,
+        ),
+        approval_rules=[
+            ApprovalRuleConfig(
+                approval_rule_id="browser-submit-approval",
+                title="Form Submission",
+                description="The agent wants to submit a form in the browser.",
+            ),
+            ApprovalRuleConfig(
+                approval_rule_id="browser-download-approval",
+                title="File Download",
+                description="The agent wants to download a file from the browser.",
+            ),
+        ],
+    )
+
+
+@pytest.fixture
 def settings() -> Settings:
     return Settings(env="test", policy_expiry_hours=24, schema_version="1.0")
 
@@ -92,10 +140,14 @@ def settings() -> Settings:
 def repo(
     default_config: TenantPolicyConfig,
     tenant_acme_config: TenantPolicyConfig,
+    tenant_browser_config: TenantPolicyConfig,
 ) -> InMemoryPolicyRepository:
     return InMemoryPolicyRepository(
         default_config=default_config,
-        tenant_configs={"acme": tenant_acme_config},
+        tenant_configs={
+            "acme": tenant_acme_config,
+            "browser-corp": tenant_browser_config,
+        },
     )
 
 

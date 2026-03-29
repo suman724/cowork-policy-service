@@ -26,6 +26,7 @@ class PolicyService:
         user_id: str,
         session_id: str,
         capabilities: list[str],
+        execution_environment: str = "desktop",
     ) -> PolicyBundle:
         if not tenant_id.strip() or not user_id.strip() or not session_id.strip():
             raise ValidationError("tenantId, userId, and sessionId are required")
@@ -35,6 +36,10 @@ class PolicyService:
             config = self._repo.get_default_config()
 
         resolved = resolve_capabilities(config.capabilities, capabilities)
+
+        # Browser capabilities are desktop-only. Remove for sandbox sessions.
+        if execution_environment == "sandbox":
+            resolved = [cap for cap in resolved if not cap.name.startswith("Browser.")]
 
         # Filter approval rules to only those referenced by resolved capabilities
         referenced_rule_ids = {cap.approvalRuleId for cap in resolved if cap.approvalRuleId}

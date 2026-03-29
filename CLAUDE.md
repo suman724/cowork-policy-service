@@ -13,7 +13,7 @@ Python, FastAPI, Pydantic models from `cowork-platform`.
 ## API Endpoint (Internal Only)
 
 ```
-GET /policy-bundles?tenantId=...&userId=...&sessionId=...&capabilities=...
+GET /policy-bundles?tenantId=...&userId=...&sessionId=...&capabilities=...&executionEnvironment=desktop|sandbox
 ```
 
 Returns a policy bundle JSON document.
@@ -28,7 +28,8 @@ Returns a policy bundle JSON document.
   "expiresAt": "...",
   "capabilities": [
     { "name": "File.Read", "allowedPaths": [...], "requiresApproval": false },
-    { "name": "Shell.Exec", "allowedCommands": [...], "requiresApproval": true, "approvalRuleId": "..." }
+    { "name": "Shell.Exec", "allowedCommands": [...], "requiresApproval": true, "approvalRuleId": "..." },
+    { "name": "Browser.Navigate", "allowedDomains": [...], "blockedDomains": [...], "requiresApproval": false }
   ],
   "llmPolicy": { "allowedModels": [...], "maxInputTokens": 64000, "maxOutputTokens": 4000, "maxSessionTokens": 250000 },
   "approvalRules": [{ "approvalRuleId": "...", "title": "...", "description": "..." }]
@@ -46,9 +47,10 @@ Returns a policy bundle JSON document.
 |-------|-----------|
 | `allowedPaths` / `blockedPaths` | File.Read, File.Write, File.Delete |
 | `allowedCommands` / `blockedCommands` | Shell.Exec |
-| `allowedDomains` | Network.Http |
-| `maxFileSizeBytes` | File.Read, File.Write, Workspace.Upload |
+| `allowedDomains` / `blockedDomains` | Network.Http, Browser.Navigate |
+| `maxFileSizeBytes` | File.Read, File.Write, Workspace.Upload, Browser.Download |
 | `maxOutputBytes` | Shell.Exec, tool outputs |
+| `executionEnvironment` | Applied at bundle generation — `Browser.*` excluded for sandbox sessions |
 | `requiresApproval` / `approvalRuleId` | All capabilities |
 
 ## Client-Side Validation

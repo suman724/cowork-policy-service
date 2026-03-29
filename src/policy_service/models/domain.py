@@ -17,6 +17,11 @@ CapabilityName = Literal[
     "LLM.Call",
     "Search.Web",
     "Code.Execute",
+    "Browser.Navigate",
+    "Browser.Interact",
+    "Browser.Extract",
+    "Browser.Submit",
+    "Browser.Download",
 ]
 
 
